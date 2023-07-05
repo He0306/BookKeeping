@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds" debug="false">
+
+
+    <!-- 日志级别
+    trace<debug<info<warn<error
+    若定义的日志级别为info，则不会打印出 trace和debug的相关日志。
+     -->
+
+    <!-- 定义全局参数常量 -->
+    <property name="log.level" value="debug"/>
+    <property name="log.maxHistory" value="30"/><!-- 30表示30个 -->
+    <!-- 日志的存放位置 -->
+    <property name="log.filePath" value="../../logs"/>
+
+    <!-- 日志的展现格式 -->
+    <!-- 彩色日志格式 -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="[${server.version}] ${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+
+    <!-- 彩色日志依赖的渲染类 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex"
+                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+
+    <!-- 定义appender (日志的输出和存放位置等). -->
+    <!-- 控制台设置 -->
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>  <!-- 控制台日志输出格式 -->
+        </encoder>
+    </appender>
+
+    <!-- DEBUG -->
+    <appender name="debugAppender" class="ch.qos.logback.core.rolling.RollingFileAppender"><!-- 日志文件会滚动 -->
+        <!-- 文件路径 -->
+        <file>${log.filePath}/debug.log</file><!-- 当前的日志文件存放路径 -->
+        <!-- 日志滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 历史日志文件的存放路径和名称 -->
+            <fileNamePattern>${log.filePath}/debug/debug.%d{yyyy-MM-dd}.${log.appName}-log.gz</fileNamePattern>
+            <!-- 日志文件最大的保存历史 数量-->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>  <!-- 日志文件中日志的格式 -->
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>  <!-- 用过滤器，只接受DEBUG级别的日志信息，其余全部过滤掉 -->
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- INFO -->
+    <appender name="infoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender"><!-- 日志文件会滚动 -->
+        <!-- 文件路径 -->
+        <file>${log.filePath}/info.log</file><!-- 当前的日志文件存放路径 -->
+        <!-- 日志滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 历史日志文件的存放路径和名称 -->
+            <fileNamePattern>${log.filePath}/info/info.%d{yyyy-MM-dd}.${log.appName}-log.gz</fileNamePattern>
+            <!-- 日志文件最大的保存历史 数量-->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>  <!-- 日志文件中日志的格式 -->
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>  <!-- 用过滤器，只接受INFO级别的日志信息，其余全部过滤掉 -->
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- ERROR-->
+    <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender"><!-- 日志文件会滚动 -->
+        <!-- 文件路径 -->
+        <file>${log.filePath}/error.log</file><!-- 当前的日志文件存放路径 -->
+        <!-- 日志滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> <!-- TimeBased默认是一天更新一次 -->
+            <!-- 历史日志文件的存放路径和名称 -->
+            <fileNamePattern>${log.filePath}/error/${log.appName}-error.%d{yyyy-MM-dd}.${log.appName}-log.gz
+            </fileNamePattern>
+            <!-- 日志文件最大的保存历史 数量-->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>  <!-- 日志文件中日志的格式 -->
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>  <!-- 用过滤器，只接受ERROR级别的日志信息，其余全部过滤掉 -->
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- logger标签用于和appender进行绑定，并告诉logback哪些包（name属性）的日志信息需要记录 -->
+    <!--logger将会继承root标签，在加上additivity="true"的属性后 root标签中的level将会被logger的level覆盖-->
+    <logger name="com.cxl" level="${log.level}" additivity="true">
+        <!-- level表示只记录哪一个级别以上的日志 -->
+        <!-- 与appender进行绑定 -->
+        <appender-ref ref="debugAppender"/>
+        <appender-ref ref="infoAppender"/>
+        <appender-ref ref="errorAppender"/>
+    </logger>
+    <root level="info">
+        <appender-ref ref="consoleAppender"/>
+    </root>
+
+</configuration>
