@@ -11,6 +11,8 @@ public enum HttpCodeEnum {
     FAILURE(400, "请求失败！", false),
     IMG_NON_COMPLIANCE(401, "图片违规，请重新上传图片！", false),
     FILE_TYPE_ERROR(402, "文件上传失败！", false),
+    NO_OPERATOR_AUTH(403, "无权限操作！", false),
+    TOKEN_NOT_NULL(405, "登录已过期，请重新登录！", false),
     SYSTEM_ERROR(500, "系统发生错误，请联系管理员！", false);
 
     private final Integer code;
