@@ -21,7 +21,7 @@ public class BaiduCheckConfig {
     @Autowired
     BaiduProperties baiduProperties;
 
-    AipContentCensor client = new AipContentCensor(baiduProperties.getAppid(), baiduProperties.getApikey(), baiduProperties.getSecret());
+
 
     /**
      * 审核图片
@@ -32,6 +32,7 @@ public class BaiduCheckConfig {
      */
     public JSONObject checkImg(MultipartFile img) throws IOException {
         byte[] files = FileCopyUtils.copyToByteArray(img.getInputStream());
+        AipContentCensor client = new AipContentCensor(baiduProperties.getAppid(), baiduProperties.getApikey(), baiduProperties.getSecret());
         return client.imageCensorUserDefined(files, null);
     }
 
@@ -42,6 +43,7 @@ public class BaiduCheckConfig {
      * @return
      */
     public JSONObject checkText(String text) {
+        AipContentCensor client = new AipContentCensor(baiduProperties.getAppid(), baiduProperties.getApikey(), baiduProperties.getSecret());
         return client.textCensorUserDefined(text);
     }
 }
